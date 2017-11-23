@@ -20,6 +20,7 @@ Currently at early prototype stage
 - pause
 - load and save
 - level progression
+- scale to viewport
 
 ### mid term
 
