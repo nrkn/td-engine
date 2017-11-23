@@ -1,11 +1,11 @@
 const Tower = () => {
   const tower = {
     facing: 0,
-    range: 1.5,
+    range: 1,
     point: { x: 0, y: 0 },
     damage: 1,
     coolDown: {
-      max: 500,
+      max: 250,
       current: 0
     },
     target: null

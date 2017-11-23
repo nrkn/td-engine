@@ -81,7 +81,7 @@ const Client = ( container, config ) => {
 
   const addProjectile = projectile => {
     const group = createElement( 'g', { width: unit, height: unit } )
-    const bullet = Circle( halfUnit, halfUnit, eigthUnit, '#0f0', '#0f0', outline )
+    const bullet = Circle( halfUnit, halfUnit, outline, 'rgba( 0, 255, 0, 0.5 )', '#0f0', outline )
 
     group.appendChild( bullet )
 

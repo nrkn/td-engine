@@ -2,7 +2,7 @@ const Creep = () => {
   const creep = {
     facing: 0,
     location: 0,
-    speed: 0.002,
+    speed: 0.001,
     alive: true,
     hp: {
       max: 3,
