@@ -9,8 +9,8 @@ const Level = config => {
   const { unit, halfUnit } = config
 
   const level = {
-    money: 50,
-    lives: 10,
+    money: 30,
+    lives: 15,
     path: [
       [ -1, 1.1875 ],
       [ 2.75, 1.1875 ],

@@ -13,7 +13,6 @@ Currently at early prototype stage
 
 ### short term
 
-- towers aim ahead of creeps
 - killing creeps earns money
 - place towers
 - upgrade towers
@@ -29,6 +28,9 @@ Currently at early prototype stage
 
 ### long term
 
+- towers that can aim ahead of creeps - just shooting fast is OK for now, it's
+  how heaps of TDs handle it
+- different targeting modes, at moment towers target closest
 - difficulty
 - test on slower machine and optimize
 - allow multiple paths through map

@@ -7,7 +7,8 @@ const Creep = () => {
     hp: {
       max: 3,
       current: 3
-    }
+    },
+    reward: 1
   }
 
   return creep
