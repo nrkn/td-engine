@@ -29,6 +29,7 @@ Currently at early prototype stage
 
 ### long term
 
+- pixi.js client - faster
 - towers that can aim ahead of creeps - just shooting fast is OK for now, it's
   how heaps of TDs handle it
 - different targeting modes, at moment towers target closest
@@ -39,8 +40,3 @@ Currently at early prototype stage
 - levels with tower slots ala Kingdom Rush
 - offensive units ala Kingdom Rush
 - levels where towers block path and creeps attack towers ala Plants vs Zombies
-
-### maybe
-
-- pixi.js client - svg is easier eg click events on elements
-  but pixi.js is much faster
