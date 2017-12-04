@@ -1,10 +1,3 @@
-import { Creep } from './creep.js'
-import { Tower } from './tower.js'
-
-const startTowers = [
-  { x: 2.5, y: 1.75 }
-]
-
 const Level = config => {
   const { unit, halfUnit } = config
 
@@ -24,22 +17,6 @@ const Level = config => {
     towers: [],
     projectiles: []
   }
-
-  for( let i = 0; i < 10; i++ ){
-    const creep = Creep()
-
-    creep.location = 0 - i * unit * 2
-
-    level.creeps.push( creep )
-  }
-
-  startTowers.forEach( point => {
-    const tower = Tower()
-
-    tower.point = point
-
-    level.towers.push( tower )
-  })
 
   return level
 }
