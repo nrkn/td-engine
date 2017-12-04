@@ -56,7 +56,7 @@ const onFrame = time => {
 const start = () => {
   last = null
   remainder = 0
-  level = Level( config )
+  level = Level()
 
   const startTowers = [
     { x: 2.5, y: 1.75 }

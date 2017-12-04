@@ -1,6 +1,4 @@
-const Level = config => {
-  const { unit, halfUnit } = config
-
+const Level = () => {
   const level = {
     money: 30,
     lives: 15,
