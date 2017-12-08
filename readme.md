@@ -13,6 +13,7 @@ Currently at early prototype stage
 
 ### short term
 
+- optimize back to steady 60fps - test on slower machines too
 - sell towers
 - upgrade towers
 - creeps come in waves
@@ -34,7 +35,6 @@ Currently at early prototype stage
   how heaps of TDs handle it
 - different targeting modes, at moment towers target closest
 - difficulty
-- test on slower machine and optimize
 - allow multiple paths through map
 - allow levels with no predefined paths, creeps pathfind from start to exit
 - levels with tower slots ala Kingdom Rush
