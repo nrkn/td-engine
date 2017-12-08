@@ -100,7 +100,24 @@ const moveTowards = ( x, y, degrees, unit ) => {
   return { x, y }
 }
 
+const sqr = x => x * x
+const dist2 = ( x1, y1, x2, y2 ) => sqr( x1 - x2 ) + sqr( y1 - y2 )
+const distanceToLineSquared = ( x1, y1, x2, y2, x, y ) => {
+  const l2 = dist2( x1, y1, x2, y2 )
+
+  if( l2 === 0 ) return dist2( x, y, x1, y1 )
+
+  let t = ( ( x - x1 ) * ( x2 - x1 ) + ( y - y1 ) * ( y2 - y1 ) ) / l2;
+
+  t = Math.max( 0, Math.min( 1, t ) )
+
+  return dist2( x , y, x1 + t * ( x2 - x1 ), y1 + t * ( y2 - y1 ) )
+}
+
+const DistanceToLine = ( x1, y1, x2, y2, x, y ) =>
+  Math.sqrt( distanceToLineSquared( x1, y1, x2, y2, x, y ) )
+
 export {
   Length, Line, PolyLine, Angle, currentLine, currentPoint, currentFacing,
-  moveTowards
+  moveTowards, DistanceToLine
 }

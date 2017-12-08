@@ -2,6 +2,8 @@ import {
   createElement, Svg, Path, Square, Rect, Line, Circle, transform
 } from './svg.js'
 
+import { Length, DistanceToLine } from './geometry.js'
+
 const groupSymbol = Symbol( 'group' )
 const creepSymbol = Symbol( 'creep' )
 const hpSymbol = Symbol( 'hp' )
@@ -14,6 +16,10 @@ const Client = ( container, config ) => {
   const debug = container.querySelector( '#debug' )
   const svg = Svg( boardSize[ 0 ], boardSize[ 1 ], scale )
   const bg = Rect( boardSize[ 0 ], boardSize[ 1 ], '#111', '#111', 0 )
+  const cursor = Circle( 0, 0, halfUnit, '#0f0', 'rgba( 0, 255, 0, 0.25 )', outline )
+
+  let pathPoints = []
+  let towers = []
 
   container.appendChild( svg )
 
@@ -21,14 +27,92 @@ const Client = ( container, config ) => {
     translate: [ -boardSize[ 0 ], -boardSize[ 1 ] ]
   }
 
+  const enableCursor = () => {
+    cursor.setAttributeNS( null, 'stroke', '#0f0' )
+    cursor.setAttributeNS( null, 'fill', 'rgba( 0, 255, 0, 0.25 )' )
+  }
+
+  const disableCursor = () => {
+    cursor.setAttributeNS( null, 'stroke', '#f00' )
+    cursor.setAttributeNS( null, 'fill', 'rgba( 255, 0, 0, 0.25 )' )
+  }
+
+  const canPlace = ( x, y ) => {
+    if( pathPoints.length < 2 ) return false
+
+    // distance from every line in level is > thickness of path
+    for( let i = 0; i < pathPoints.length - 1; i++ ){
+      const from = pathPoints[ i ]
+      const to = pathPoints[ i + 1 ]
+      const x1 = from[ 0 ]
+      const y1 = from[ 1 ]
+      const x2 = to[ 0 ]
+      const y2 = to[ 1 ]
+
+      const distance = DistanceToLine( x1, y1, x2, y2, x, y )
+
+      if( distance < unit ) return false
+    }
+
+    let canPlace = true
+
+    towers.forEach( tower => {
+      if( !canPlace ) return
+
+      const distance = Length( tower.point.x, tower.point.y, x, y )
+
+      canPlace = distance > unit
+    })
+
+    return canPlace
+  }
+
+  const moveCursor = e => {
+    svg.appendChild( cursor )
+
+    const rect = svg.getBoundingClientRect()
+    const x = ( e.pageX - rect.left ) / scale
+    const y = ( e.pageY - rect.top ) / scale
+
+    transform( cursor, {
+      translate: [ x, y ]
+    })
+
+    if( canPlace( x, y ) ){
+      enableCursor()
+    } else {
+      disableCursor()
+    }
+  }
+
+  const click = e => {
+    const rect = svg.getBoundingClientRect()
+    const x = ( e.pageX - rect.left ) / scale
+    const y = ( e.pageY - rect.top ) / scale
+
+    if( canPlace( x, y ) ){
+      client.userActions.push( [ 'addTower', x, y ] )
+    }
+  }
+
   const clear = () => {
+    pathPoints = []
+    towers = []
+    client.userActions = []
+
     while( svg.firstChild )
       svg.removeChild( svg.firstChild )
 
     svg.appendChild( bg )
+
+    svg.appendChild( cursor )
+    svg.addEventListener( 'mousemove', moveCursor )
+    svg.addEventListener( 'click', click )
   }
 
   const addPath = points => {
+    pathPoints.push( ...points )
+
     const path = Path( points, '#666', unit )
 
     svg.appendChild( path )
@@ -54,6 +138,8 @@ const Client = ( container, config ) => {
   }
 
   const addTower = tower => {
+    towers.push( tower )
+
     const group = createElement( 'g', { width: unit, height: unit } )
     const range = Circle( halfUnit, halfUnit, tower.range, 'rgba( 0, 255, 0, 0.5 )', 'rgba( 0, 255, 0, 0.1 )', outline )
     const circle = Circle( halfUnit, halfUnit, halfUnit, '#0f0', 'rgba( 0, 255, 0, 0.25 )', outline )
@@ -168,6 +254,8 @@ const Client = ( container, config ) => {
 
     return false
   }
+
+  client.userActions = []
 
   return client
 }

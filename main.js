@@ -24,6 +24,18 @@ const onFrame = time => {
   last = time
   total += elapsed
 
+  while( client.userActions.length ){
+    const action = client.userActions.shift()
+
+    if( action[ 0 ] === 'addTower' ){
+      const tower = Tower()
+      tower.point.x = action[ 1 ]
+      tower.point.y = action[ 2 ]
+
+      game.buyTower( tower )
+    }
+  }
+
   const actions = game.tick( ticks )
 
   let gameOver = false
@@ -38,6 +50,7 @@ const onFrame = time => {
 
   const debugValue = {
     fps,
+    money: level.money,
     lives: level.lives,
     time: ~~( total / 1000 )
   }
@@ -59,13 +72,15 @@ const start = () => {
   level = Level()
 
   const startTowers = [
-    { x: 2.5, y: 1.75 }
   ]
 
-  for( let i = 0; i < 10; i++ ){
+  for( let i = 0; i < 50; i++ ){
     const creep = Creep()
 
-    creep.location = 0 - i * config.unit * 2
+    creep.location = -5 - i * config.unit * 2
+    creep.speed *= 1.5
+    creep.hp.max *= 1.5
+    creep.hp.current *= 1.5
 
     level.creeps.push( creep )
   }

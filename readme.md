@@ -14,7 +14,8 @@ Currently at early prototype stage
 ### short term
 
 - killing creeps earns money
-- place towers
+- buy towers
+- sell towers
 - upgrade towers
 - creeps come in waves
 - pause

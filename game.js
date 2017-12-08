@@ -29,6 +29,8 @@ const closestTarget = ( from, targets, range = Infinity ) => {
 }
 
 const Game = ( level, config ) => {
+  let totalTicks = 0
+
   const lines = PolyLine( level.path )
 
   let actions = [
@@ -36,6 +38,8 @@ const Game = ( level, config ) => {
     [ 'updateLives', level.lives ],
     [ 'addPath', level.path ]
   ]
+
+  const userActions = []
 
   const killCreep = creep => {
     creep.alive = false
@@ -131,6 +135,8 @@ const Game = ( level, config ) => {
 
       if( target.hp.current <= 0 ){
         killCreep( target )
+
+        level.money += target.reward
       }
 
       killProjectile( projectile )
@@ -153,9 +159,23 @@ const Game = ( level, config ) => {
 
   const tick = ticks => {
     for( let i = 0; i < ticks; i++ ){
+      const currentTick = totalTicks + i
+
+      if( userActions[ currentTick ] ){
+        const userAction = userActions[ currentTick ]
+        const type = userAction[ 0 ]
+
+        if( type === 'addTower' ){
+          level.towers.push( userAction[ 1 ] )
+          actions.push( userAction )
+        }
+      }
+
       level.projectiles.forEach( updateProjectile )
       level.creeps.forEach( updateCreep )
       level.towers.forEach( updateTower )
+
+      totalTicks++
     }
 
     level.projectiles.forEach( projectile => {
@@ -190,7 +210,21 @@ const Game = ( level, config ) => {
     actions.push([ 'addTower', tower ])
   })
 
-  const game = { tick }
+  const buyTower = tower => {
+    if( level.money < tower.cost ) return false
+
+    level.money -= tower.cost
+
+    let index = totalTicks
+    while( userActions[ index ] ){
+      index++
+    }
+    userActions[ index ] = [ 'addTower', tower ]
+
+    return true
+  }
+
+  const game = { tick, buyTower }
 
   return game
 }
