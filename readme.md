@@ -1,43 +1,29 @@
 # td-engine
 
-A JavaScript engine for building tower defense games in the browser
+Tower defense engine for the browser
 
-Requires a browser that supports [import/export](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import),
-eg Chrome, or Firefox with `dom.moduleScripts.enabled` in `about:config`
+## 2025-06-25
 
-Currently at early prototype stage
+Quick rebuild to get things rolling again
 
-![screenshot](screenshot.png)
+So far, we have a responsive SVG map and the path that the creeps will follow
 
-## TODO
+We can translate mouse events between the SVG element and the viewport
 
-### short term
+## todo
 
-- optimize back to steady 60fps - test on slower machines too
-- sell towers
-- upgrade towers
-- creeps come in waves
-- pause
-- load and save
-- level progression
-- scale to viewport
-
-### mid term
-
-- add more tower types
-- add more creep types
-
-### long term
-
-- pixi.js client - faster
-- electron app
-- towers that can aim ahead of creeps - just shooting fast is OK for now, it's
-  how heaps of TDs handle it
-- different targeting modes, at moment towers target closest
-- difficulty
-- allow multiple paths through map
-- allow levels with no predefined paths, creeps pathfind from start to exit
-- levels with tower slots ala Kingdom Rush
-- offensive units ala Kingdom Rush
-- levels where towers block path and creeps attack towers ala Plants vs Zombies
-- make an actual game
+- some more drawing code, towers, creeps, projectiles
+- some basic UI (money, select a tower)
+- design types for towers and creeps etc
+- basic simulation code 
+  - creeps move
+  - towers shoot
+  - creeps die
+  - money earned
+  - towers placed
+- game boilerplate - start, pause, end, restart etc  
+- improve simulation code
+  - add waves
+  - more tower types
+  - more creep types
+ 

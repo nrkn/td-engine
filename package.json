@@ -1,0 +1,24 @@
+{
+  "name": "td-engine",
+  "version": "0.0.2",
+  "description": "Browser TD engine",
+  "type": "module",
+  "scripts": {
+    "start-prev": "npx http-server ./_prev",
+    "start": "tsc && npx http-server ./data/www"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nrkn/td-engine.git"
+  },
+  "keywords": [],
+  "author": "Nik Coughlin <nrkn.com@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nrkn/td-engine/issues"
+  },
+  "homepage": "https://github.com/nrkn/td-engine#readme",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
