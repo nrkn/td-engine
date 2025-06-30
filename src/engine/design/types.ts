@@ -1,4 +1,4 @@
-import { Maybe } from '../lib/types.js'
+import { Maybe } from '../../lib/types.js'
 
 /*
   WIP
@@ -68,34 +68,29 @@ export type CreepData = EditData & {
     geometry defined elsewhere, or to a color etc
 */
 
-// decided to move the path id into the WaveCreep 
-// it simplifies waves from a UX perspective - if you have multiple paths with
-// their own waves, you have to have a send next button for each path etc
-export type WaveCreep = {
-  type: 'creep',
-  // the time in ms that this creep enters the path
-  enterTime: number,
+type WaveItemShared = {
+  // the time that this creep enters the path relative to the start of the wave
+  startMs: number,
   // the id of the path this creep will follow
   pathId: string,
   // the id of the creepData prototype this creep will use
   creepId: string
 }
 
+export type WaveCreep = {
+  // discriminator
+  type: 'creep'
+} & WaveItemShared
+
 export type WaveGroup = {
-  type: 'group',
-  // how long before first creep in group enters
-  startTime: number
+  // discriminator
+  type: 'group'
+
   // how long between each creep spawned in this group
-  deltaTime: number
-  // number of creeps in this group
-  copies: number
-  // the id of the creepData prototype these creeps will use
-  creepId: string
-  // this type could become more complex later, eg 
-  // creepIds: [ 1, 2, 3 ], if copies was 8 then it would be 1,2,3,1,2,3,1,2
-  // or we could allow compositing of groups or whatever - but for now, a group
-  // repeating the same creepId is sufficient
-}
+  intervalMs: number
+  // the id of the path this group will follow
+  count: number
+} & WaveItemShared
 
 export type WaveItem = WaveCreep | WaveGroup
 
@@ -103,7 +98,7 @@ export type WaveItem = WaveCreep | WaveGroup
   runtime creep instance might look like:
   
   {
-    enterTime: number
+    startMs: number
     pathId: string
     creepId: string
     hp: number
@@ -123,7 +118,7 @@ export type WaveItem = WaveCreep | WaveGroup
   we will also need eg position, facing etc - these can be derived but we might
   want to store them temporarily in the instance between updates for performance
 
-  we can create all of the instance creeps at level load time to avoid gc churn   
+  we can create all of the instance creeps at level load time to avoid gc churn;   
   if later we allow dynamic spawning, we can use an object pool instead
 */
 
@@ -134,7 +129,7 @@ export type Wave = {
   // will keep the grouping in the design data for a better authoring experience
   creeps: WaveItem[]
   // time in ms until the next wave starts automatically if not called early
-  duration: number
+  durationMs: number
 }
 
 // later we may make this more complex, eg a tower might have a list of 
@@ -157,14 +152,14 @@ export type TowerData = EditData & {
   // how far this tower can see to target creeps, in svg units
   range: number
   // firing rate, in ms
-  rate: number
+  firingIntervalMs: number
 }
 /*
   tags may be involved in special weapon types, drawing etc
 */
 
 // standard projectile, later we will add more complex ones, eg homing, 
-// bouncing etc
+// bouncing; effect based like slow, poison etc
 export type BulletData = EditData & {
   // how much damage this bullet does
   damage: number
@@ -184,7 +179,11 @@ export type LevelData = EditData & {
   startMoney: number
 
   // the paths used in this level
+  //
+  // may not be necessary - we could derive the list of paths used from 
+  // the wave data - I feel better having it be explicit tho
   pathIds: string[]
+
   // the waves in this level
   waves: Wave[]
 
@@ -200,6 +199,8 @@ export type WorldData = EditData & {
   // order of the levels in this world
   // may later be modified to allow branching paths
   levelIds: string[]
+  // it's also possible that we could store the levels linearly as default 
+  // behaviour and use tags to define edges for branching paths?
 }
 /*
   tags may be involved in custom world properties, they might link a custom
@@ -220,3 +221,4 @@ export type CampaignData = EditData & {
   // may later be modified to allow branching paths
   worldIds: string[]
 }
+
