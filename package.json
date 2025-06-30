@@ -1,7 +1,7 @@
 {
   "name": "td-engine",
   "version": "0.0.2",
-  "description": "Browser TD engine",
+  "description": "TD Engine",
   "type": "module",
   "scripts": {
     "start-prev": "npx http-server ./_prev",
