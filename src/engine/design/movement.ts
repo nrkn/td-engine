@@ -41,6 +41,8 @@ type LineData = {
   type: 'line'
   // in svg units
   length: number 
+  // rads - 0 is right/east
+  direction: number
   // start and end point indices in the polyline
   lineIdx: [number, number] 
 }
@@ -64,13 +66,15 @@ export const polylineData = (polyline: PtTuple[]) => {
     const dy = p2[1] - p1[1]
     const length = Math.sqrt(dx * dx + dy * dy)
 
-    data.push({ type: 'line', length, lineIdx: [i, i + 1] })
+    const direction = Math.atan2(dy, dx)
+
+    data.push({ type: 'line', length, direction, lineIdx: [i, i + 1] })
 
     if (i < polyline.length - 2) {
       // calculate the angle to turn
       const nextP = polyline[i + 2]
       const angle = (
-        Math.atan2(nextP[1] - p2[1], nextP[0] - p2[0]) - Math.atan2(dy, dx)
+        Math.atan2(nextP[1] - p2[1], nextP[0] - p2[0]) - direction
       )
       // convert to turns
       const turns = Math.abs(angle / (Math.PI * 2))
