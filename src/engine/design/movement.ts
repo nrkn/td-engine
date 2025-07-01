@@ -12,25 +12,30 @@ export const simulateMovement = (
   // when moving between path segments, how long it takes to turn to face the 
   // next segment
   // ms per full turn eg 2π rads; if 0 or undefined, creep turns instantly
-  msPerTurn = 0
+  msPerTurn = 0,
+  spawnTimeMs = 0
 ) => {
   const events: MoveEvent[] = []
 
-  let time = 0
+  let totalMs = spawnTimeMs
 
   const data = polylineData(polyline)
 
   for (const segment of data) {
     if (segment.type === 'line') {
       // move for the length of the segment
-      const duration = segment.length / speed // in ms
-      time += duration
-      events.push(['move', duration, time])
+      const durationMs = segment.length / speed
+
+      totalMs += durationMs
+
+      events.push(['move', durationMs, totalMs])
     } else if (segment.type === 'turn') {
       // turn for the duration of the turn
-      const duration = segment.turns * msPerTurn // in ms
-      time += duration
-      events.push(['turn', duration, time])
+      const durationMs = segment.turns * msPerTurn
+
+      totalMs += durationMs
+
+      events.push(['turn', durationMs, totalMs])
     }
   }
 
@@ -40,17 +45,17 @@ export const simulateMovement = (
 type LineData = {
   type: 'line'
   // in svg units
-  length: number 
+  length: number
   // rads - 0 is right/east
   direction: number
   // start and end point indices in the polyline
-  lineIdx: [number, number] 
+  lineIdx: [number, number]
 }
 
 type TurnData = {
   type: 'turn'
   // 1 turn === 2π rads, so 90deg === 0.25
-  turns: number 
+  turns: number
 }
 
 type PolylineData = LineData | TurnData
