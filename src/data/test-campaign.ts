@@ -28,6 +28,16 @@ export const testCampaign: CampaignData = {
         ["money", 5],
         ["xp", 1]
       ]
+    },
+    "boss": {
+      "id": "boss",
+      "name": "Boss Creep",
+      "speed": 0.02,
+      "maxHp": 50,
+      "rewards": [
+        ["money", 20],
+        ["xp", 5]
+      ]
     }
   },
 
@@ -36,7 +46,7 @@ export const testCampaign: CampaignData = {
       "id": "bullet-1",
       "name": "Standard Bullet",
       "damage": 3,
-      "speed": 0.4 
+      "speed": 0.4
     }
   },
 
@@ -48,7 +58,7 @@ export const testCampaign: CampaignData = {
       "cost": 50,
       "sellPrice": 35,
       "bulletId": "bullet-1",
-      "range": 100,  
+      "range": 100,
       "firingIntervalMs": 800
     }
   },
@@ -72,9 +82,56 @@ export const testCampaign: CampaignData = {
               "pathId": "path-1",
               "count": 3,
               "creepId": "basic"
+            },
+            // spawns part way through the group above - cool!
+            {
+              "type": "creep",
+              "startMs": 1000,
+              "pathId": "path-1",
+              "creepId": "boss"
+            },
+            // test spawning after wave end
+            {
+              "type": "creep",
+              "startMs": 4100,
+              "pathId": "path-1",
+              "creepId": "boss"
+            },
+            // same time as a creep from the next wave
+            {
+              "type": "creep",
+              "startMs": 4900,
+              "pathId": "path-1",
+              "creepId": "boss"
+            },
+            // test spawning after *next* wave has also ended
+            {
+              "type": "creep",
+              "startMs": 7100,
+              "pathId": "path-1",
+              "creepId": "boss"
             }
           ],
           "durationMs": 4000
+        },
+        {
+          "creeps": [
+            {
+              "type": "group",
+              "startMs": 0,
+              "intervalMs": 300,
+              "pathId": "path-1",
+              "count": 6,
+              "creepId": "basic"
+            },
+            {
+              "type": "creep",
+              "startMs": 2000,
+              "pathId": "path-1",
+              "creepId": "boss"
+            }
+          ],
+          "durationMs": 3000
         }
       ],
 
