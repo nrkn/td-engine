@@ -36,11 +36,13 @@ export type EditData = {
   tags?: string[]
 }
 
+export type PtTuple = [x: number, y: number]
+
 // creeps spawn at start and exit at end
 // worry about more complex scenarios later
 export type PathData = EditData & {
   // the geometry of the path, as a polyline, in svg units
-  path: [x: number, y: number][]
+  path: PtTuple[]
 }
 
 export type RewardType = 'money' | 'xp'
@@ -53,6 +55,11 @@ export type CreepData = EditData & {
   // could potentially be affected by tags, eg 'pulse' might slow down and 
   // speed up etc
   speed: number
+
+  // when moving between path segments, how long it takes to turn to face the 
+  // next segment
+  // ms per full turn eg 2π rads; if 0 or undefined, creep turns instantly
+  msPerTurn?: number
 
   // max hp - runtime engine will track current/max hp
   maxHp: number
@@ -130,6 +137,10 @@ export type Wave = {
   creeps: WaveItem[]
   // time in ms until the next wave starts automatically if not called early
   durationMs: number
+
+  // if defined, the user cannot send the next wave before this time
+  // it should be <= durationMs, otherwise that is very silly
+  minDurationMs?: number
 }
 
 // later we may make this more complex, eg a tower might have a list of 
@@ -146,6 +157,11 @@ export type TowerData = EditData & {
   cost: number
   // sell price for this tower
   sellPrice: number
+
+  // how long building, selling or upgrading this tower takes, in ms
+  buildTimeMs?: number // if 0 or undefined, tower is built instantly
+  sellTimeMs?: number // if 0 or undefined, tower is sold instantly
+  upgradeTimeMs?: number // if 0 or undefined, tower is upgraded instantly
 
   // type of bullet this tower fires
   bulletId: string

@@ -1,6 +1,7 @@
 import { testCampaign } from '../../data/test-campaign.js'
-import { assrt } from '../../lib/util.js'
-import { CampaignData, Wave, WaveCreep, WaveItem } from './types.js'
+import { assrt, maybe } from '../../lib/util.js'
+import { polylineData, simulateMovement } from './movement.js'
+import { CampaignData, PtTuple, Wave, WaveCreep, WaveItem } from './types.js'
 
 const expandItems = (items: WaveItem[]): WaveCreep[] => {
   const out: WaveCreep[] = []
@@ -38,6 +39,17 @@ type ActiveWave = {
 }
 
 // quick and dirty simulation of waves, using the first level of the first world
+/*
+  todo:
+
+  - simulate creep movement, don't log all movement, just log when:
+    - creep starts moving, eg at spawn or after turning
+    - creep stops moving, eg to turn
+    - creep starts turning
+    - creep stops turning
+    - creep exits the path
+  
+*/
 const simulateWaves = (
   campaign: CampaignData,
   sendNextWaveEarly = false,
@@ -62,6 +74,8 @@ const simulateWaves = (
   // bail early if level takes more than ~16 minutes to run
   const MAX_MS = 1e6
 
+  // todo - creep movement
+
   /* -------------------------------------------------------------- */
   for (; time < MAX_MS; time++) {
     // if time for a new wave
@@ -81,9 +95,14 @@ const simulateWaves = (
       log(time, 'wave start', nextWaveIdx)
 
       // when does next wave start
-      const overlap = (
+      let overlap = (
         sendNextWaveEarly ? w.durationMs * earlyModifier : w.durationMs
       )
+
+      if (maybe(w.minDurationMs) && w.minDurationMs > overlap) {
+        // if defined, the user cannot send the next wave before this time
+        overlap = w.minDurationMs
+      }
 
       nextWaveStartTime = start + overlap
       nextWaveIdx++
@@ -99,7 +118,8 @@ const simulateWaves = (
         aw.nextCreep < aw.creeps.length &&
         aw.creeps[aw.nextCreep].startMs <= relTime
       ) {
-        const { pathId, creepId } = aw.creeps[aw.nextCreep]
+        const waveCreep = aw.creeps[aw.nextCreep]
+        const { pathId, creepId } = waveCreep
 
         log(time, 'creep spawn', `wave[${aw.idx}]`, pathId, creepId)
 
@@ -124,6 +144,52 @@ const simulateWaves = (
   }
 
   console.table(events)
+
+  const firstWave = expandWave(waves[0])
+
+  const firstBasic = assrt(
+    firstWave.find(c => c.creepId === 'basic'),
+    'First wave should have a basic creep'
+  )
+
+  const firstBasicData = assrt(
+    campaign.creeps[firstBasic.creepId],
+    `Creep ${firstBasic.creepId} not found`
+  )
+
+  const firstBoss = assrt(
+    firstWave.find(c => c.creepId === 'boss'),
+    'First wave should have a boss creep'
+  )
+
+  const firstBossData = assrt(
+    campaign.creeps[firstBoss.creepId],
+    `Creep ${firstBoss.creepId} not found`
+  )
+
+  const firstPath = assrt(
+    campaign.paths[firstBasic.pathId],
+    `Path ${firstBasic.pathId} not found`
+  )
+
+  const basicMoves = simulateMovement(
+    firstPath.path, firstBasicData.speed, firstBasicData.msPerTurn
+  )
+
+  const bossMoves = simulateMovement(
+    firstPath.path, firstBossData.speed, firstBossData.msPerTurn
+  )
+
+  const pathData = polylineData(firstPath.path)
+
+  console.log('path data')
+  console.table(pathData)
+
+  console.log('basic creep moves')
+  console.table(basicMoves)
+
+  console.log('boss creep moves')
+  console.table(bossMoves)
 }
 
 console.log('waves sim, no sending waves early')
@@ -133,3 +199,15 @@ simulateWaves(testCampaign)
 console.log('waves sim, sending waves early')
 
 simulateWaves(testCampaign, true, 0.25)
+
+// just quickly test that polylineData works
+
+const testPath: PtTuple[] = [
+  [0, 0],
+  [100, 0],
+  [100, 100],
+  [100, 0],
+]
+
+console.log('test path data')
+console.table(polylineData(testPath))

@@ -23,6 +23,7 @@ export const testCampaign: CampaignData = {
       "id": "basic",
       "name": "Basic Creep",
       "speed": 0.05,
+      // turns instantly, no need to define msPerTurn
       "maxHp": 10,
       "rewards": [
         ["money", 5],
@@ -30,9 +31,11 @@ export const testCampaign: CampaignData = {
       ]
     },
     "boss": {
+      // slow turn
       "id": "boss",
       "name": "Boss Creep",
       "speed": 0.02,
+      "msPerTurn": 2000,
       "maxHp": 50,
       "rewards": [
         ["money", 20],
@@ -112,7 +115,9 @@ export const testCampaign: CampaignData = {
               "creepId": "boss"
             }
           ],
-          "durationMs": 4000
+          "durationMs": 4000,
+          // test restricting sending the next wave early
+          "minDurationMs": 1250
         },
         {
           "creeps": [

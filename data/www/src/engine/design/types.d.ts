@@ -4,13 +4,15 @@ export type EditData = {
     name: string;
     tags?: string[];
 };
+export type PtTuple = [x: number, y: number];
 export type PathData = EditData & {
-    path: [x: number, y: number][];
+    path: PtTuple[];
 };
 export type RewardType = 'money' | 'xp';
 export type Reward = [type: RewardType, amount: number];
 export type CreepData = EditData & {
     speed: number;
+    msPerTurn?: number;
     maxHp: number;
     rewards: Reward[];
 };
@@ -31,11 +33,15 @@ export type WaveItem = WaveCreep | WaveGroup;
 export type Wave = {
     creeps: WaveItem[];
     durationMs: number;
+    minDurationMs?: number;
 };
 export type TowerData = EditData & {
     nextId: Maybe<string>;
     cost: number;
     sellPrice: number;
+    buildTimeMs?: number;
+    sellTimeMs?: number;
+    upgradeTimeMs?: number;
     bulletId: string;
     range: number;
     firingIntervalMs: number;
